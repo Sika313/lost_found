@@ -26,7 +26,7 @@ defmodule LostFoundWeb.PageController do
       r = Map.from_struct(result)
       conn
       |> put_flash(:info, "Logged in successfully.")
-      |> put_session(:token, r.id)
+      |> put_session(:id, r.id)
       |> live_render(LostFoundWeb.AdminLive) 
     end
   end

@@ -20,6 +20,7 @@ defmodule LostFoundWeb.Router do
     get "/", PageController, :home
     get "/login", PageController, :login
     post "/login", PageController, :handle_login
+    get "/logout", PageController, :logout
   end
 
   # Other scopes may use custom stacks.

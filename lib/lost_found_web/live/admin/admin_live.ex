@@ -2,10 +2,17 @@ defmodule LostFoundWeb.AdminLive do
   use LostFoundWeb, :live_view
   alias LostFound.ROLES
   alias LostFound.USERS
+  alias LostFound.CATEGORIES
   alias LostFoundWeb.ViewRolesComponent
   alias LostFoundWeb.ViewUsersComponent
+  alias LostFoundWeb.ViewCategoriesComponent
 
   def mount(_params, session, socket) do
+    categories = CATEGORIES.list_categories()
+    categories = for category <- categories do
+      Map.from_struct(category)
+    end
+
     roles = for role <- ROLES.list_roles() do
       Map.from_struct(role)
     end
@@ -16,6 +23,8 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:user, user)
     |> assign(:view_roles, false)
     |> assign(:view_users, false)
+    |> assign(:categories, categories)
+    |> assign(:view_categories, false)
     {:ok, socket}
   end
 
@@ -27,6 +36,11 @@ defmodule LostFoundWeb.AdminLive do
   def handle_event("close_view_users", _params, socket) do
     socket = socket
     |> assign(:view_users, false)
+    {:noreply, socket}
+  end
+  def handle_event("close_view_categories", _params, socket) do
+    socket = socket
+    |> assign(:view_categories, false)
     {:noreply, socket}
   end
 
@@ -45,11 +59,18 @@ defmodule LostFoundWeb.AdminLive do
     |> put_flash(:info, "Role added successfully.")
     {:noreply, socket}
   end
+
   def handle_event("view_roles", _params, socket) do
     socket = socket
     |> assign(:view_roles, true)
     {:noreply, socket}
   end
+  def handle_event("view_categories", _params, socket) do
+    socket = socket
+    |> assign(:view_categories, true)
+    {:noreply, socket}
+  end
+
 
 
   def handle_event("handle_add_user", params, socket) do
@@ -76,6 +97,18 @@ defmodule LostFoundWeb.AdminLive do
     {:noreply, socket}
   end
 
+  def handle_event("handle_add_category", params, socket) do
+    category = %{name: params["name"]}
+    CATEGORIES.create_category(category)
 
+    categories = CATEGORIES.list_categories()
+    categories = for category <- categories do
+      Map.from_struct(category)
+    end
+    socket = socket
+    |> assign(:categories, categories)
+    |> put_flash(:info, "Category successfully added")
+    {:noreply, socket}
+  end
 
 end

@@ -32,11 +32,3 @@ admin = %{
 
 USERS.create_user(admin)
 
-categories = [
-  %{name: "ELECTRONIC"},
-  %{name: "DOCUMENT"}
-]
-
-for category <- categories do
-  CATEGORIES.create_category(category)
-end

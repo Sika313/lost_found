@@ -10,6 +10,11 @@
 <button phx-click={show_modal("add_user")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add user</button>
     <button phx-click="view_users" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View users</button>
 
+<h1><u>Category Management</u></h1>
+<button phx-click={show_modal("add_category")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add category</button>
+    <button phx-click="view_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View categories</button>
+
+
 
 <a href="/logout" class="flex flex-row items-center mt-4">
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -26,6 +31,11 @@
 <%= if @view_users do %>
   <.live_component module={ViewUsersComponent} id="view_users" />
 <% end %>
+
+<%= if @view_categories do %>
+  <.live_component module={ViewCategoriesComponent} id="view_categories" categories={@categories} />
+<% end %>
+
 
 </div>
 
@@ -65,6 +75,14 @@
     <button type="submit" class="text-white bg-blue-800 hover:bg-blue-700 transition-colors px-2 py-4" phx-click={hide_modal("add_user")}>Submit</button>
   </form>
 
+</.modal>
+
+<.modal id="add_category">
+  <form phx-submit="handle_add_category">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" placeholder="Name" />
+    <button type="submit" phx-click={hide_modal("add_category")} class="bg-blue-500 text-white px-4 py-2">Add</button>
+  </form>
 </.modal>
 
 

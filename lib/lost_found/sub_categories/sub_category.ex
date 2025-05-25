@@ -3,7 +3,7 @@ defmodule LostFound.SUB_CATEGORIES.Sub_category do
   import Ecto.Changeset
 
   schema "sub_categories" do
-    belongs_to :category, Category, foreign_key: :sub_category_id, type: :id
+    belongs_to :category, Category, foreign_key: :category_id, type: :id
     field :name, :string
 
     timestamps(type: :utc_datetime)
@@ -12,7 +12,7 @@ defmodule LostFound.SUB_CATEGORIES.Sub_category do
   @doc false
   def changeset(sub_category, attrs) do
     sub_category
-    |> cast(attrs, [:name, :sub_category_id])
-    |> validate_required([:name, :sub_category_id])
+    |> cast(attrs, [:name, :category_id])
+    |> validate_required([:name, :category_id])
   end
 end

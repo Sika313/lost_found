@@ -3,9 +3,11 @@ defmodule LostFoundWeb.AdminLive do
   alias LostFound.ROLES
   alias LostFound.USERS
   alias LostFound.CATEGORIES
+  alias LostFound.SUB_CATEGORIES
   alias LostFoundWeb.ViewRolesComponent
   alias LostFoundWeb.ViewUsersComponent
   alias LostFoundWeb.ViewCategoriesComponent
+  alias LostFoundWeb.ViewSubCategoriesComponent
 
   def mount(_params, session, socket) do
     categories = CATEGORIES.list_categories()
@@ -13,6 +15,11 @@ defmodule LostFoundWeb.AdminLive do
       Map.from_struct(category)
     end
 
+    sub_categories = SUB_CATEGORIES.list_sub_categories()
+    sub_categories = for sub_category <- sub_categories do
+      Map.from_struct(sub_category)
+    end
+  
     roles = for role <- ROLES.list_roles() do
       Map.from_struct(role)
     end
@@ -24,7 +31,9 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_roles, false)
     |> assign(:view_users, false)
     |> assign(:categories, categories)
+    |> assign(:sub_categories, sub_categories)
     |> assign(:view_categories, false)
+    |> assign(:view_sub_categories, false)
     {:ok, socket}
   end
 
@@ -41,6 +50,11 @@ defmodule LostFoundWeb.AdminLive do
   def handle_event("close_view_categories", _params, socket) do
     socket = socket
     |> assign(:view_categories, false)
+    {:noreply, socket}
+  end
+  def handle_event("close_view_sub_categories", _params, socket) do
+    socket = socket
+    |> assign(:view_sub_categories, false)
     {:noreply, socket}
   end
 
@@ -68,6 +82,11 @@ defmodule LostFoundWeb.AdminLive do
   def handle_event("view_categories", _params, socket) do
     socket = socket
     |> assign(:view_categories, true)
+    {:noreply, socket}
+  end
+  def handle_event("view_sub_categories", _params, socket) do
+    socket = socket
+    |> assign(:view_sub_categories, true)
     {:noreply, socket}
   end
 
@@ -108,6 +127,25 @@ defmodule LostFoundWeb.AdminLive do
     socket = socket
     |> assign(:categories, categories)
     |> put_flash(:info, "Category successfully added")
+    {:noreply, socket}
+  end
+
+  def handle_event("handle_add_sub_category", params, socket) do
+    IO.inspect(params, label: "PARAMS--->")
+    sub_category = %{
+      name: params["name"],
+      category_id: String.to_integer(params["category_id"])
+    }
+    SUB_CATEGORIES.create_sub_category(sub_category)
+
+    sub_categories = SUB_CATEGORIES.list_sub_categories()
+    sub_categories = for sub_category <- sub_categories do
+      Map.from_struct(sub_category)
+    end
+  
+    socket = socket
+    |> assign(:sub_categories, sub_categories)
+    |> put_flash(:info, "Sub category added successfully.")
     {:noreply, socket}
   end
 

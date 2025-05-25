@@ -5,7 +5,7 @@ defmodule LostFound.Repo.Migrations.CreateSubCategories do
     create table(:sub_categories) do
       add :name, :string
 
-      add :sub_category, references(:categories, column: :id, on_delete: :nothing)
+      add :category_id, references(:categories, column: :id, on_delete: :nothing)
 
       timestamps(type: :utc_datetime)
     end

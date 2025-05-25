@@ -2,17 +2,31 @@
 <div class="flex flex-col items-center w-[20vw] bg-rose-800 text-white">
 <img src="/images/admin.png" class="w-40 h-40 rounded-full" />
 <h1 class="mb-4"><%= @user.fname %> <%= @user.lname %></h1>
+
 <h1><u>Role Management</u></h1>
-<button phx-click={show_modal("add_role")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add role</button>
-    <button phx-click="view_roles" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View Roles</button>
+<select class="bg-rose-800 border-rose-800 mb-4">
+<option phx-click={show_modal("add_role")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add role</option>
+    <option phx-click="view_roles" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View Roles</option>
+</select>
 
 <h1><u>User Management</u></h1>
-<button phx-click={show_modal("add_user")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add user</button>
-    <button phx-click="view_users" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View users</button>
+<select class="bg-rose-800 border-0 mb-4">
+<option phx-click={show_modal("add_user")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add user</option>
+    <option phx-click="view_users" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View users</option>
+</select>
+
 
 <h1><u>Category Management</u></h1>
-<button phx-click={show_modal("add_category")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add category</button>
-    <button phx-click="view_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View categories</button>
+<select class="bg-rose-800 border-0 mb-4">
+<option phx-click={show_modal("add_category")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add category</option>
+    <option phx-click="view_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View categories</option>
+</select>
+
+<h1><u>Sub-category Management</u></h1>
+<select class="bg-rose-800 border-0 mb-4">
+<option phx-click={show_modal("add_sub_category")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add sub-category</option>
+    <option phx-click="view_sub_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View sub-categories</option>
+</select>
 
 
 
@@ -35,6 +49,11 @@
 <%= if @view_categories do %>
   <.live_component module={ViewCategoriesComponent} id="view_categories" categories={@categories} />
 <% end %>
+
+<%= if @view_sub_categories do %>
+  <.live_component module={ViewSubCategoriesComponent} id="view_categories" sub_categories={@sub_categories} />
+<% end %>
+
 
 
 </div>
@@ -85,4 +104,21 @@
   </form>
 </.modal>
 
-
+<.modal id="add_sub_category">
+<%= if @categories == [] do %>
+  <h1>No category found.</h1>
+<% else %>
+  <form phx-submit="handle_add_sub_category" class="flex flex-col">
+    <h1 class="mb-4">Sub category</h1>
+    <label for="name">Name</label> 
+    <input type="text" id="name" name="name" />
+    <label for="category">Choose category</label>
+    <select name="category_id">
+      <%= for category <- @categories do %>
+        <option value={category.id}><%= category.name %></option>
+      <% end %>
+    </select>
+    <button type="submit" phx-click={hide_modal("add_sub_category")} class="bg-blue-500 text-white px-4 py-2">Add</button>
+  </form>
+<% end %>
+</.modal>

@@ -10,6 +10,7 @@ defmodule LostFound.Repo.Migrations.CreateItems do
       add :status, :string
 
       add :category_id, references(:categories, column: :id, on_delete: :nothing)
+      add :sub_category_id, references(:sub_categories, column: :id, on_delete: :nothing)
       timestamps(type: :utc_datetime)
     end
   end

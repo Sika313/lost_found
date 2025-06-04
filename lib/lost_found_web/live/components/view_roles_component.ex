@@ -1,10 +1,16 @@
 defmodule LostFoundWeb.ViewRolesComponent do
   use LostFoundWeb, :live_component
   alias LostFoundWeb.ROLES
+  alias LostFound.ROLE_PERMISSIONS
 
   def update(assigns, socket) do
+    role_permissions = for role <- assigns.roles do
+      
+      role_permission = ROLE_PERMISSIONS.get_role_permission!(role.id) |> Map.from_struct()
+      Map.put(role, :role_permission, role_permission)
+    end
     socket = socket
-    |> assign(:roles, assigns.roles)
+    |> assign(:roles, role_permissions)
     {:ok, socket}
   end
 
@@ -28,7 +34,9 @@ defmodule LostFoundWeb.ViewRolesComponent do
                 <th scope="col" class="px-6 py-3">
                  Description 
                 </th>
-
+                <th scope="col" class="px-6 py-3">
+                 Permissions 
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -38,12 +46,13 @@ defmodule LostFoundWeb.ViewRolesComponent do
                  <%= role.name %> 
                 </th>
                 <td class="px-6 py-4">
-                  <%= role.name %> 
-                </td>
-                <td class="px-6 py-4">
                   <%= role.description %> 
                 </td>
-            </tr>
+                <td class="px-6 py-4">
+                  <%= role.role_permission.permissions %> 
+                </td>
+
+               </tr>
           <% end %>
       </tbody>
     </table>

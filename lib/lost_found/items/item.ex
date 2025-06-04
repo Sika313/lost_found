@@ -4,6 +4,7 @@ defmodule LostFound.ITEMS.Item do
 
   schema "items" do
     belongs_to :category, Category, foreign_key: :category_id, type: :id
+    belongs_to :sub_category, Sub_category, foreign_key: :sub_category_id, type: :id
     field :code, :string
     field :description, :string
     field :img_path, :string
@@ -16,7 +17,7 @@ defmodule LostFound.ITEMS.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:code, :location, :description, :img_path, :status, :category_id])
-    |> validate_required([:code, :location, :description, :img_path, :status, :category_id])
+    |> cast(attrs, [:code, :location, :description, :img_path, :status, :category_id, :sub_category_id])
+    |> validate_required([:code, :location, :description, :img_path, :status, :category_id, :sub_category_id])
   end
 end

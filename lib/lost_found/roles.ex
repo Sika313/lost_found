@@ -9,6 +9,14 @@ defmodule LostFound.ROLES do
   alias LostFound.ROLES.Role
 
   @doc """
+    USER DEFINED FUNCTIONS
+  """
+  def find_by_name(name) do
+    query = from r in Role, where: r.name == ^name
+    Repo.one(query)
+  end
+  
+  @doc """
   Returns the list of roles.
 
   ## Examples

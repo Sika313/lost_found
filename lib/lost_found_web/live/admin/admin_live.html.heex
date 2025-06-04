@@ -64,6 +64,11 @@
   <input type="text" id="name" name="name" placeholder="Name" />
   <label for="description">Description</label>
   <textarea id="description" name="description" rows="4" cols="50"></textarea>
+  <h1><u>Permissions</u></h1>
+  <%= for permission <- @permissions do %>
+    <label for={permission.name}> <%= permission.name %></label>
+    <input type="checkbox" id={permission.name} name={permission.name} value={permission.name} />
+  <% end %>
 
   <button type="submit" class="text-white bg-blue-800 hover:bg-blue-700 transition-colors px-2 py-4" phx-click={hide_modal("add_role")}>Submit</button>
 </form>

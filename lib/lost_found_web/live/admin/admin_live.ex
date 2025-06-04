@@ -4,12 +4,18 @@ defmodule LostFoundWeb.AdminLive do
   alias LostFound.USERS
   alias LostFound.CATEGORIES
   alias LostFound.SUB_CATEGORIES
+  alias LostFound.PERMISSIONS
+  alias LostFound.ROLE_PERMISSIONS
   alias LostFoundWeb.ViewRolesComponent
   alias LostFoundWeb.ViewUsersComponent
   alias LostFoundWeb.ViewCategoriesComponent
   alias LostFoundWeb.ViewSubCategoriesComponent
 
   def mount(_params, session, socket) do
+    permissions = PERMISSIONS.list_permissions() 
+    permissions_map = for permission <- permissions do
+      Map.from_struct(permission)
+    end
     categories = CATEGORIES.list_categories()
     categories = for category <- categories do
       Map.from_struct(category)
@@ -26,6 +32,7 @@ defmodule LostFoundWeb.AdminLive do
 
     user = USERS.get_user!(session["id"]) |> Map.from_struct()
     socket = socket
+    |> assign(:permissions, permissions_map)
     |> assign(:roles, roles)
     |> assign(:user, user)
     |> assign(:view_roles, false)
@@ -59,11 +66,17 @@ defmodule LostFoundWeb.AdminLive do
   end
 
     def handle_event("handle_add_role", params, socket) do
+
+    IO.inspect(params, label: "PARAMS--->")
+    perm = Map.delete(params, "name")
+    permissions = Map.delete(perm, "description")
+
     role = %{
       name: params["name"],
       description: params["description"]
     }
     ROLES.create_role(role)
+    |> then(fn i -> add_role_permission(params["name"], permissions) end)
     roles = for role <- ROLES.list_roles() do
       Map.from_struct(role)
     end
@@ -72,6 +85,15 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:roles, roles)
     |> put_flash(:info, "Role added successfully.")
     {:noreply, socket}
+  end
+  def add_role_permission(name, permissions) do
+   role = ROLES.find_by_name(name) |> Map.from_struct() 
+   permission_list = Map.values(permissions)
+   role_permission = %{
+    role_id: role.id,
+    permissions: permission_list
+   }
+   permissions = ROLE_PERMISSIONS.create_role_permission(role_permission)
   end
 
   def handle_event("view_roles", _params, socket) do

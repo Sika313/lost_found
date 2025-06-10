@@ -10,6 +10,8 @@ defmodule LostFound.ITEMS.Item do
     field :img_path, :string
     field :location, :string
     field :status, :string
+    field :brought_by, :string
+    field :received_by, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -17,7 +19,7 @@ defmodule LostFound.ITEMS.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:code, :location, :description, :img_path, :status, :category_id, :sub_category_id])
-    |> validate_required([:code, :location, :description, :img_path, :status, :category_id, :sub_category_id])
+    |> cast(attrs, [:code, :location, :description, :img_path, :status, :category_id, :sub_category_id, :brought_by, :received_by])
+    |> validate_required([:code, :location, :description, :img_path, :status, :category_id, :sub_category_id, :brought_by, :received_by])
   end
 end

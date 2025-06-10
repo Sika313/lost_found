@@ -28,6 +28,13 @@
     <option phx-click="view_sub_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View sub-categories</option>
 </select>
 
+<h1><u>Item Management</u></h1>
+<select class="bg-rose-800 border-0 mb-4">
+<option phx-click={show_modal("add_item")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Register item</option>
+    <option phx-click="view_items" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View items</option>
+</select>
+
+
 
 
 <a href="/logout" class="flex flex-row items-center mt-4">
@@ -54,7 +61,9 @@
   <.live_component module={ViewSubCategoriesComponent} id="view_categories" sub_categories={@sub_categories} />
 <% end %>
 
-
+<%= if @view_items do %>
+  <.live_component module={ViewItemsComponent} id="view_items" view_image={@view_image} found_id={@found_id} />
+<% end %>
 
 </div>
 
@@ -125,5 +134,37 @@
     </select>
     <button type="submit" phx-click={hide_modal("add_sub_category")} class="bg-blue-500 text-white px-4 py-2">Add</button>
   </form>
+<% end %>
+</.modal>
+
+<.modal id="add_item">
+  <%= if @categories == [] and @sub_categories == [] do %>
+    <h1>No category found.</h1>
+  <% else %>
+<form id="upload-form" phx-submit="save" phx-change="validate" class="flex flex-col">
+
+<.live_file_input upload={@uploads.avatar} /> <br />
+<label for="category_id">Category</label>
+<select id="category_id" name="category_id">
+  <%= for category <- @categories do %>
+    <option value={category.id}><%= category.name %></option>
+  <% end %>
+</select>
+<label for="sub_category_id">Sub category:</label>
+<select id="sub_category_id" name="sub_category_id">
+  <%= for sub_category <- @sub_categories do %>
+    <option value={sub_category.id}><%= sub_category.name %></option>
+  <% end %>
+</select>
+
+<label for="description">Description</label>
+<input type="text" id="description" name="description" placeholder="Description" />
+<label for="location">Location</label>
+<input type="text" id="location" name="location" placeholder="Location" />
+<label for="brought_by">Brought by(type phone number)</label>
+<input type="text" id="brought_by" name="brought_by" placeholder="Brought by" />
+<button type="submit" phx-click={hide_modal("add_item")}>Upload</button>
+</form>
+
 <% end %>
 </.modal>

@@ -1,5 +1,7 @@
 defmodule LostFoundWeb.AdminLive do
   use LostFoundWeb, :live_view
+
+  alias LostFound.ITEMS
   alias LostFound.ROLES
   alias LostFound.USERS
   alias LostFound.CATEGORIES
@@ -10,6 +12,7 @@ defmodule LostFoundWeb.AdminLive do
   alias LostFoundWeb.ViewUsersComponent
   alias LostFoundWeb.ViewCategoriesComponent
   alias LostFoundWeb.ViewSubCategoriesComponent
+  alias LostFoundWeb.ViewItemsComponent
 
   def mount(_params, session, socket) do
     permissions = PERMISSIONS.list_permissions() 
@@ -41,6 +44,11 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:sub_categories, sub_categories)
     |> assign(:view_categories, false)
     |> assign(:view_sub_categories, false)
+    |> assign(:view_items, false)
+    |> assign(:view_image, " ")
+    |> assign(:found_id, " ")
+    |> assign(:uploaded_files, [])
+    |> allow_upload(:avatar, accept: ~w(.jpg), max_entries: 2)
     {:ok, socket}
   end
 
@@ -64,6 +72,12 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_sub_categories, false)
     {:noreply, socket}
   end
+  def handle_event("close_view_items", _params, socket) do
+    socket = socket
+    |> assign(:view_items, false)
+    {:noreply, socket}
+  end
+
 
     def handle_event("handle_add_role", params, socket) do
 
@@ -111,6 +125,12 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_sub_categories, true)
     {:noreply, socket}
   end
+  def handle_event("view_items", _params, socket) do
+    socket = socket
+    |> assign(:view_items, true)
+    {:noreply, socket}
+  end
+
 
 
 
@@ -168,6 +188,68 @@ defmodule LostFoundWeb.AdminLive do
     socket = socket
     |> assign(:sub_categories, sub_categories)
     |> put_flash(:info, "Sub category added successfully.")
+    {:noreply, socket}
+  end
+
+
+  def handle_event("save", params, socket) do
+  IO.inspect(params, label: "PARAMS--->")
+  uploaded_files =
+    consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry ->
+      dest = Path.join(Application.app_dir(:lost_found, "priv/static/images/uploads"), Path.basename(path))
+      # You will need to create `priv/static/uploads` for `File.cp!/2` to work.
+      File.cp!(path, dest <> ".jpg")
+      file_name = String.splitter(dest, "/") |> Enum.take(-1)
+      full_file_name = Enum.at(file_name, 0) <> ".jpg"
+
+
+      uploads = %{
+      category_id: params["category_id"],
+      sub_category_id: params["sub_category_id"],
+      code: UUID.uuid4(),
+      description: params["description"],
+      img_path: full_file_name,
+      location: params["location"],
+      status: "NOT FOUND",
+      brought_by: params["brought_by"],
+      received_by: "PENDING"
+      }
+      ITEMS.create_item(uploads)
+     
+      PROPERTIES.create_property(uploads)
+      {:ok, ~p"/uploads/#{Path.basename(dest)}"}
+    end)
+    {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
+  end
+
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
+  end
+
+
+  def handle_event("handle_view_image", params, socket) do
+    IO.inspect(params, label: "SELF, PARAMS--->")
+    socket = socket
+    |> assign(:view_image, params["image"])
+    {:noreply, socket}
+  end
+
+  def handle_event("found", params, socket) do
+    IO.inspect(params, label: "FOUND PARAMS--->")
+    socket = socket
+    |> assign(:found_id, params["found_id"])
+    {:noreply, socket}
+  end
+  
+  def handle_event("handle_found", params, socket) do
+    item = ITEMS.get_item!(String.to_integer(socket.assigns.found_id))
+    update = %{
+      status: "FOUND",
+      received_by: params["received_by"]
+    }
+    ITEMS.update_item(item, update)
+    socket = socket
+    |> put_flash(:info, "Item updated successfully.")
     {:noreply, socket}
   end
 

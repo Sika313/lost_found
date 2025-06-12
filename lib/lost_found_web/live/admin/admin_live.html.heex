@@ -168,3 +168,24 @@
 
 <% end %>
 </.modal>
+
+<.modal id="edit">
+<form phx-submit="handle_edit" class="flex flex-col text-black">
+
+<input type="text" id="d" name="d" value={@item.description} />
+<label for="description">Description</label>
+<input type="text" id="description" name="description" value={@item.description} />
+
+<label for="location">Location</label>
+<input type="text" id="location" name="location" value={@item.location} />
+<label for="brought_by">Brought by</label>
+<input type="text" id="brought_by" name="brought_by" value={@item.brought_by} />
+
+<input type="text" name="found_id" value={@found_id} class="hidden" />
+
+<button type="submit" phx-click={hide_modal("edit")}>Edit</button>
+</form>
+     
+</.modal>
+
+

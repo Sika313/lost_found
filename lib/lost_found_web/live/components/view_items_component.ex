@@ -63,6 +63,10 @@ defmodule LostFoundWeb.ViewItemsComponent do
                   Brought by 
                 </th>
                 <th scope="col" class="px-6 py-3">
+                  Date submitted 
+                </th>
+
+                <th scope="col" class="px-6 py-3">
                   Received by 
                 </th>
 
@@ -93,6 +97,10 @@ defmodule LostFoundWeb.ViewItemsComponent do
                   <%= item.brought_by %>  
                 </td>
                 <td class="px-6 py-4">
+                  <%= item.inserted_at %>  
+                </td>
+
+                <td class="px-6 py-4">
                   <%= item.received_by %>  
                 </td>
                 <td class="px-6 py-4">
@@ -100,6 +108,7 @@ defmodule LostFoundWeb.ViewItemsComponent do
                 <input type="text" name="image" value={item.img_path} class="hidden" />
                   <button type="submit" phx-click={show_modal("view_image")} class="bg-blue-600 text-white px-2">View image</button>
                   </form>
+              </td>
                 <%= if item.status != "FOUND" do %>
                  <td class="px-6 py-4">
                 <form phx-submit="found">
@@ -108,9 +117,15 @@ defmodule LostFoundWeb.ViewItemsComponent do
                   </form>
                 </td>
                 <% end %>
-
-               </td>
-
+                 <%= if item.status != "FOUND" do %>
+                 <td class="px-6 py-4">
+                <form phx-submit="edit">
+                <input type="text" name="found_id" value={item.id} class="hidden" />
+                  <button type="submit" phx-click={show_modal("edit")} class="bg-blue-600 text-white p-2">Edit</button>
+                  </form>
+                </td>
+                <% end %>
+ 
             </tr>
           <% end %>
       </tbody>
@@ -126,10 +141,11 @@ defmodule LostFoundWeb.ViewItemsComponent do
         <label for="received_by">Received by</label>
         <input type="text" id="received_by" name="received_by" placeholder="Received by" />
       
-      <button type="submit" phx-click={show_modal("found")} class="bg-blue-600 text-white p-2">Found</button>
+      <button type="submit" phx-click={hide_modal("found")} class="bg-blue-600 text-white p-2">Found</button>
 
       </form>
     </.modal>
+
 </div>
 
    """

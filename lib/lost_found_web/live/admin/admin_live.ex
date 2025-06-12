@@ -46,6 +46,11 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_sub_categories, false)
     |> assign(:view_items, false)
     |> assign(:view_image, " ")
+    |> assign(:item, %{
+      description: " ",
+      location: " ",
+      brought_by: " ",
+    })
     |> assign(:found_id, " ")
     |> assign(:uploaded_files, [])
     |> allow_upload(:avatar, accept: ~w(.jpg), max_entries: 2)
@@ -113,25 +118,50 @@ defmodule LostFoundWeb.AdminLive do
   def handle_event("view_roles", _params, socket) do
     socket = socket
     |> assign(:view_roles, true)
+    |> assign(:view_users, false)
+    |> assign(:view_categories, false)
+    |> assign(:view_sub_categories, false)
+    |> assign(:view_items, false)
     {:noreply, socket}
   end
+def handle_event("view_users", _params, socket) do
+    socket = socket
+    |> assign(:view_roles, false)
+    |> assign(:view_users, true)
+    |> assign(:view_categories, false)
+    |> assign(:view_sub_categories, false)
+    |> assign(:view_items, false)
+    {:noreply, socket}
+  end
+
+
   def handle_event("view_categories", _params, socket) do
     socket = socket
+    |> assign(:view_roles, false)
+    |> assign(:view_users, false)
     |> assign(:view_categories, true)
+    |> assign(:view_sub_categories, false)
+    |> assign(:view_items, false)
     {:noreply, socket}
   end
   def handle_event("view_sub_categories", _params, socket) do
     socket = socket
+    |> assign(:view_roles, false)
+    |> assign(:view_users, false)
+    |> assign(:view_categories, false)
     |> assign(:view_sub_categories, true)
+    |> assign(:view_items, false)
     {:noreply, socket}
   end
   def handle_event("view_items", _params, socket) do
     socket = socket
+    |> assign(:view_roles, false)
+    |> assign(:view_users, false)
+    |> assign(:view_categories, false)
+    |> assign(:view_sub_categories, false)
     |> assign(:view_items, true)
     {:noreply, socket}
   end
-
-
 
 
   def handle_event("handle_add_user", params, socket) do
@@ -143,7 +173,6 @@ defmodule LostFoundWeb.AdminLive do
       password: params["password"],
       role_id: params["role_id"]
     }
-    IO.inspect(user)
     USERS.create_user(user)
 
     user = USERS.get_user!(socket.assigns.user.id) |> Map.from_struct()
@@ -152,13 +181,7 @@ defmodule LostFoundWeb.AdminLive do
     |> put_flash(:info, "User added successfully.")
     {:noreply, socket}
   end
-  def handle_event("view_users", _params, socket) do
-    socket = socket
-    |> assign(:view_users, true)
-    {:noreply, socket}
-  end
-
-  def handle_event("handle_add_category", params, socket) do
+    def handle_event("handle_add_category", params, socket) do
     category = %{name: params["name"]}
     CATEGORIES.create_category(category)
 
@@ -173,7 +196,6 @@ defmodule LostFoundWeb.AdminLive do
   end
 
   def handle_event("handle_add_sub_category", params, socket) do
-    IO.inspect(params, label: "PARAMS--->")
     sub_category = %{
       name: params["name"],
       category_id: String.to_integer(params["category_id"])
@@ -235,12 +257,21 @@ defmodule LostFoundWeb.AdminLive do
   end
 
   def handle_event("found", params, socket) do
-    IO.inspect(params, label: "FOUND PARAMS--->")
     socket = socket
     |> assign(:found_id, params["found_id"])
     {:noreply, socket}
   end
-  
+
+  def handle_event("edit", params, socket) do
+    IO.inspect("HHHIIITTT--->")
+    item = ITEMS.get_item!(String.to_integer(params["found_id"])) |> Map.from_struct() 
+    IO.inspect(item, label: "ITEM--->")
+    socket = socket
+    |> assign(:found_id, params["found_id"])
+    |> assign(:item, item)
+    {:noreply, socket}
+  end
+
   def handle_event("handle_found", params, socket) do
     item = ITEMS.get_item!(String.to_integer(socket.assigns.found_id))
     update = %{
@@ -248,6 +279,15 @@ defmodule LostFoundWeb.AdminLive do
       received_by: params["received_by"]
     }
     ITEMS.update_item(item, update)
+    socket = socket
+    |> put_flash(:info, "Item updated successfully.")
+    {:noreply, socket}
+  end
+
+  def handle_event("handle_edit", params, socket) do
+    IO.inspect(params, label: "EDIT PARAMS--->")
+    item = ITEMS.get_item!(String.to_integer(params["found_id"])) 
+    ITEMS.update_item(item, params)
     socket = socket
     |> put_flash(:info, "Item updated successfully.")
     {:noreply, socket}

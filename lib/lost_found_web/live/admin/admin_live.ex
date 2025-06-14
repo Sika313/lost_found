@@ -34,8 +34,10 @@ defmodule LostFoundWeb.AdminLive do
     end
 
     user = USERS.get_user!(session["id"]) |> Map.from_struct()
+    user_permissions = ROLE_PERMISSIONS.get_by_role_id(user.role_id) |> Map.from_struct()
     socket = socket
     |> assign(:permissions, permissions_map)
+    |> assign(:user_permissions, user_permissions.permissions)
     |> assign(:roles, roles)
     |> assign(:user, user)
     |> assign(:view_roles, false)

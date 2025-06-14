@@ -3,37 +3,59 @@
 <img src="/images/admin.png" class="w-40 h-40 rounded-full" />
 <h1 class="mb-4"><%= @user.fname %> <%= @user.lname %></h1>
 
+<%= for permission <- @user_permissions do %>
+<%= if permission == "ALL" or permission == "ROLE MANAGEMENT" do %>
 <h1><u>Role Management</u></h1>
 <select class="bg-rose-800 border-rose-800 mb-4">
 <option phx-click={show_modal("add_role")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add role</option>
     <option phx-click="view_roles" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View Roles</option>
 </select>
+<% end %>
+<% end %>
+
+<%= for permission <- @user_permissions do %>
+<%= if permission == "ALL" or permission == "USER MANAGEMENT" do %>
 
 <h1><u>User Management</u></h1>
 <select class="bg-rose-800 border-0 mb-4">
 <option phx-click={show_modal("add_user")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add user</option>
     <option phx-click="view_users" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View users</option>
 </select>
+<% end %>
+<% end %>
 
+<%= for permission <- @user_permissions do %>
+<%= if permission == "ALL" or permission == "CATEGORY MANAGEMENT" do %>
 
 <h1><u>Category Management</u></h1>
 <select class="bg-rose-800 border-0 mb-4">
 <option phx-click={show_modal("add_category")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add category</option>
     <option phx-click="view_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View categories</option>
 </select>
+<% end %>
+<% end %>
+
+<%= for permission <- @user_permissions do %>
+<%= if permission == "ALL" or permission == "SUB_CATEGORY MANAGEMENT" do %>
 
 <h1><u>Sub-category Management</u></h1>
 <select class="bg-rose-800 border-0 mb-4">
 <option phx-click={show_modal("add_sub_category")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Add sub-category</option>
     <option phx-click="view_sub_categories" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View sub-categories</option>
 </select>
+<% end %>
+<% end %>
+
+<%= for permission <- @user_permissions do %>
+<%= if permission == "ALL" or permission == "ITEM MANAGEMENT" do %>
 
 <h1><u>Item Management</u></h1>
 <select class="bg-rose-800 border-0 mb-4">
 <option phx-click={show_modal("add_item")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Register item</option>
     <option phx-click="view_items" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View items</option>
 </select>
-
+<% end %>
+<% end %>
 
 
 

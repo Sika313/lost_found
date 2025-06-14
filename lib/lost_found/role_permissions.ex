@@ -9,6 +9,14 @@ defmodule LostFound.ROLE_PERMISSIONS do
   alias LostFound.ROLE_PERMISSIONS.Role_permission
 
   @doc """
+    USER DEFINED FUNCTIONS
+  """
+  def get_by_role_id(role_id) do
+    query = from r in Role_permission, where: r.role_id == ^role_id
+    Repo.one(query)
+  end
+
+  @doc """
   Returns the list of role_permissions.
 
   ## Examples

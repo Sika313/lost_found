@@ -1,13 +1,18 @@
 defmodule LostFoundWeb.ViewUsersComponent do
   use LostFoundWeb, :live_component
   alias LostFound.USERS
+  alias LostFound.ROLES
 
   def update(assigns, socket) do
     users = for user <- USERS.list_users() do
       Map.from_struct(user)
     end
+    users_one = for user <- users do
+      role = ROLES.get_role!(user.role_id) |> Map.from_struct()
+      Map.put(user, :role, role)
+    end
     socket = socket
-    |> assign(:users, users)
+    |> assign(:users, users_one)
     {:ok, socket}
   end
 
@@ -37,6 +42,10 @@ defmodule LostFoundWeb.ViewUsersComponent do
                 <th scope="col" class="px-6 py-3">
                   Phone number 
                 </th>
+                <th scope="col" class="px-6 py-3">
+                  Role 
+                </th>
+
             </tr>
         </thead>
         <tbody>
@@ -54,6 +63,10 @@ defmodule LostFoundWeb.ViewUsersComponent do
                 <td class="px-6 py-4">
                   <%= user.phone %>  
                 </td>
+                <td class="px-6 py-4">
+                  <%= user.role.name %>  
+                </td>
+
             </tr>
           <% end %>
       </tbody>

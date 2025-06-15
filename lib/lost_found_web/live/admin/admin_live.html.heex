@@ -53,6 +53,7 @@
 <select class="bg-rose-800 border-0 mb-4">
 <option phx-click={show_modal("add_item")} class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">Register item</option>
     <option phx-click="view_items" class="mb-4  px-4 py-2 hover:bg-rose-300 transition-colors">View items</option>
+<option phx-click="view_customer_reports" class="mb-4 px-4 py-2 hover:bg-rose-300 transition-colors">View customer reports</option>
 </select>
 <% end %>
 <% end %>
@@ -86,6 +87,11 @@
 <%= if @view_items do %>
   <.live_component module={ViewItemsComponent} id="view_items" view_image={@view_image} found_id={@found_id} />
 <% end %>
+
+<%= if @view_customer_reports do %>
+  <.live_component module={ViewCustomerReportsComponent} id="view_customer_reports" />
+<% end %>
+
 
 </div>
 

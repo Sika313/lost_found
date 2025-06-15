@@ -13,6 +13,7 @@ defmodule LostFoundWeb.AdminLive do
   alias LostFoundWeb.ViewCategoriesComponent
   alias LostFoundWeb.ViewSubCategoriesComponent
   alias LostFoundWeb.ViewItemsComponent
+  alias LostFoundWeb.ViewCustomerReportsComponent
 
   def mount(_params, session, socket) do
     permissions = PERMISSIONS.list_permissions() 
@@ -48,6 +49,7 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_sub_categories, false)
     |> assign(:view_items, false)
     |> assign(:view_image, " ")
+    |> assign(:view_customer_reports, false)
     |> assign(:item, %{
       description: " ",
       location: " ",
@@ -84,11 +86,14 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_items, false)
     {:noreply, socket}
   end
+  def handle_event("close_view_customer_reports", _params, socket) do
+    socket = socket
+    |> assign(:view_customer_reports, false)
+    {:noreply, socket}
+  end
 
 
     def handle_event("handle_add_role", params, socket) do
-
-    IO.inspect(params, label: "PARAMS--->")
     perm = Map.delete(params, "name")
     permissions = Map.delete(perm, "description")
 
@@ -124,6 +129,7 @@ defmodule LostFoundWeb.AdminLive do
     |> assign(:view_categories, false)
     |> assign(:view_sub_categories, false)
     |> assign(:view_items, false)
+    |> assign(:view_customer_reports, false)
     {:noreply, socket}
   end
 def handle_event("view_users", _params, socket) do
@@ -133,6 +139,8 @@ def handle_event("view_users", _params, socket) do
     |> assign(:view_categories, false)
     |> assign(:view_sub_categories, false)
     |> assign(:view_items, false)
+
+    |> assign(:view_customer_reports, false)
     {:noreply, socket}
   end
 
@@ -144,6 +152,7 @@ def handle_event("view_users", _params, socket) do
     |> assign(:view_categories, true)
     |> assign(:view_sub_categories, false)
     |> assign(:view_items, false)
+    |> assign(:view_customer_reports, false)
     {:noreply, socket}
   end
   def handle_event("view_sub_categories", _params, socket) do
@@ -153,6 +162,7 @@ def handle_event("view_users", _params, socket) do
     |> assign(:view_categories, false)
     |> assign(:view_sub_categories, true)
     |> assign(:view_items, false)
+    |> assign(:view_customer_reports, false)
     {:noreply, socket}
   end
   def handle_event("view_items", _params, socket) do
@@ -162,8 +172,20 @@ def handle_event("view_users", _params, socket) do
     |> assign(:view_categories, false)
     |> assign(:view_sub_categories, false)
     |> assign(:view_items, true)
+    |> assign(:view_customer_reports, false)
     {:noreply, socket}
   end
+  def handle_event("view_customer_reports", _params, socket) do
+    socket = socket
+    |> assign(:view_roles, false)
+    |> assign(:view_users, false)
+    |> assign(:view_categories, false)
+    |> assign(:view_sub_categories, false)
+    |> assign(:view_items, false)
+    |> assign(:view_customer_reports, true)
+    {:noreply, socket}
+  end
+
 
 
   def handle_event("handle_add_user", params, socket) do

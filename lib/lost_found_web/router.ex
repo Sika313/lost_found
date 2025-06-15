@@ -20,6 +20,7 @@ defmodule LostFoundWeb.Router do
     get "/", PageController, :home
     get "/login", PageController, :login
     post "/login", PageController, :handle_login
+    live "/report_item", CustomerLive
     get "/logout", PageController, :logout
   end
 

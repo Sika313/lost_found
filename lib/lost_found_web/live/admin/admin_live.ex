@@ -102,7 +102,7 @@ defmodule LostFoundWeb.AdminLive do
       description: params["description"]
     }
     ROLES.create_role(role)
-    |> then(fn i -> add_role_permission(params["name"], permissions) end)
+    add_role_permission(params["name"], permissions) 
     roles = for role <- ROLES.list_roles() do
       Map.from_struct(role)
     end
@@ -113,7 +113,7 @@ defmodule LostFoundWeb.AdminLive do
     {:noreply, socket}
   end
   def add_role_permission(name, permissions) do
-   role = ROLES.find_by_name(name) |> Map.from_struct() 
+   role = ROLES.find_by_name(name) |> IO.inspect(label: "FIX--->") |> Map.from_struct() 
    permission_list = Map.values(permissions)
    role_permission = %{
     role_id: role.id,

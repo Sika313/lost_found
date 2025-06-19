@@ -102,6 +102,7 @@ defmodule LostFoundWeb.AdminLive do
       description: params["description"]
     }
     ROLES.create_role(role)
+    Process.sleep(5000)
     add_role_permission(params["name"], permissions) 
     roles = for role <- ROLES.list_roles() do
       Map.from_struct(role)
